@@ -34,18 +34,22 @@ export class AppComponent {
   fetchDepartures() {
     this.tramService.getDepartures()
       .subscribe((data) => {
+        console.log(data)
         const filteredDepartures = data.departures
           .filter((departure: any) =>
-            departure.line.designation === '30' &&
             departure.stop_area.name === 'Luma' &&
-            this.isHeadingTowardsLinde(departure)
+            departure.line.transport_mode === 'TRAM'&&
+            departure.destination !== 'Solna station'&&
+            departure.direction_code === 2 &&
+            departure.destination !== 'Linde'
           )
           .map((d: any) => ({
             line: { designation: d.line.designation },
             destination: d.destination,
             time: d.display == 'Nu' ? 120 : this.convertDisplayToSeconds(d.display),
             state: d.state,
-            display: d.display
+            display: d.display,
+            direction_code :d.direction_code
           }));
         this.departures.set(filteredDepartures);
       });
